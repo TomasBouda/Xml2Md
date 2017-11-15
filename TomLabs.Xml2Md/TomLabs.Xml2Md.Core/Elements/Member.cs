@@ -5,8 +5,6 @@ namespace TomLabs.Xml2Md.Core.Elements
 {
 	public class Member : Element
 	{
-		public new const string ELEMENT_NAME = "member";
-
 		public EReferenceType ReferenceType { get; }
 
 		public string Name { get; set; }
@@ -16,6 +14,9 @@ namespace TomLabs.Xml2Md.Core.Elements
 		public Member(XElement xElement) : base(xElement)
 		{
 			Name = NameExtractor(xElement);
+
+			ReferenceType = ResolveReferenceType(Name);
+			Name = StripOfReferenceType(Name);
 		}
 	}
 }

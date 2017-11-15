@@ -11,7 +11,9 @@ namespace TomLabs.Xml2Md.Generator
 			var inReader = new StreamReader(args[0]);
 			var xml = inReader.ReadToEnd();
 			var doc = XDocument.Parse(xml);
-			var map = doc.Root.ToDocumentMap();
+			//var map = doc.Root.ToDocumentTree();
+			var mapper = new DocumentMapper(doc.Root);
+			var res = mapper.Map();
 		}
 	}
 }
