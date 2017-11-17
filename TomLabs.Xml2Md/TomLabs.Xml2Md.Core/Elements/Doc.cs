@@ -17,5 +17,10 @@ namespace TomLabs.Xml2Md.Core.Elements
 		{
 			AssemblyName = AssemblyNameExtractor(xElement);
 		}
+
+		public override string ToString()
+		{
+			return AssemblyName;
+		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using TomLabs.Xml2Md.Core.Extensions;
@@ -78,6 +79,52 @@ namespace TomLabs.Xml2Md.Core.Elements
 		protected string StripOfReferenceType(string refName)
 		{
 			return ReferencePrefixRegex.Replace(refName, "");
+		}
+
+		/// <summary>
+		/// Replaces complex XML nodes with {i} symbols which are later filled with rendered childes
+		/// </summary>
+		/// <param name="nodes"></param>
+		/// <returns></returns>
+		protected string PrepareRichInfo(IEnumerable<XNode> nodes)
+		{
+			var output = new StringBuilder();
+			int i = 0;
+			foreach (var node in nodes)
+			{
+				if (Regex.IsMatch(node.ToString(), @"<(.*?)/>|<\w+>(\s+)?(.*?)(\s+)?</\w+>"))
+				{
+					output.Append("{" + i + "}");
+					i++;
+				}
+				else
+				{
+					output.Append(node.ToString());
+				}
+			}
+			return output.ToString();
+		}
+
+		public override string ToString()
+		{
+			return Text;
+		}
+
+		public virtual string ToString(Dictionary<Type, Func<Element, string>> style)
+		{
+			if (style.TryGetValue(this.GetType(), out var format))
+			{
+				return ToString(format);
+			}
+			else
+			{
+				return ToString();
+			}
+		}
+
+		public virtual string ToString(Func<Element, string> format)
+		{
+			return format(this);
 		}
 	}
 }

@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using TomLabs.Shadowgem.Extensions.String;
+using TomLabs.Xml2Md.Core.Elements.RichInfos;
 
-namespace TomLabs.Xml2Md.Core.Elements.RichInfos
+namespace TomLabs.Xml2Md.Core.Elements.Refs.Crefs
 {
-	/// <summary>
-	/// Base class for elements that can contain another child elements
-	/// </summary>
-	public abstract class RichInfo : Element
+	public class Exception : Cref, IRichInfo
 	{
 		public override Func<XElement, string> TextExtractor => (x) => PrepareRichInfo(x.Nodes());
 
-		public RichInfo(XElement xElement) : base(xElement)
+		public Exception(XElement xElement) : base(xElement)
 		{
 
 		}

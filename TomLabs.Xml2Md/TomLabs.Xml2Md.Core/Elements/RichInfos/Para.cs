@@ -2,7 +2,7 @@
 
 namespace TomLabs.Xml2Md.Core.Elements.RichInfos
 {
-	public class Para : RichInfo
+	public class Para : RichInfo, IRichInfo
 	{
 		public Para(XElement xElement) : base(xElement)
 		{

@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace TomLabs.Xml2Md.Core.Elements.Crefs
+namespace TomLabs.Xml2Md.Core.Elements.Refs.Crefs
 {
 	public class SeeAlso : See
 	{

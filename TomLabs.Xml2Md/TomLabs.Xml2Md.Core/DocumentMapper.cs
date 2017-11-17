@@ -12,7 +12,7 @@ namespace TomLabs.Xml2Md.Core
 	{
 		/// <summary>
 		/// Provides mappings for XML element name to Type
-		/// eg. seeaslo => <see cref="TomLabs.Xml2Md.Core.Elements.Crefs.SeeAlso"/>
+		/// eg. seeaslo => <see cref="TomLabs.Xml2Md.Core.Elements.Refs.SeeAlso"/>
 		/// </summary>
 		public static Dictionary<string, Type> ElementTypeMapping { get; private set; } = Assembly.GetExecutingAssembly()
 			.GetTypes()

@@ -7,16 +7,21 @@ namespace TomLabs.Xml2Md.Core.Elements
 	{
 		public EReferenceType ReferenceType { get; }
 
-		public string Name { get; set; }
+		public string ReferenceName { get; set; }
 
 		public virtual Func<XElement, string> NameExtractor => (x) => x.Attribute("name").Value;
 
 		public Member(XElement xElement) : base(xElement)
 		{
-			Name = NameExtractor(xElement);
+			ReferenceName = NameExtractor(xElement);
 
-			ReferenceType = ResolveReferenceType(Name);
-			Name = StripOfReferenceType(Name);
+			ReferenceType = ResolveReferenceType(ReferenceName);
+			ReferenceName = StripOfReferenceType(ReferenceName);
+		}
+
+		public override string ToString()
+		{
+			return ReferenceName;
 		}
 	}
 }

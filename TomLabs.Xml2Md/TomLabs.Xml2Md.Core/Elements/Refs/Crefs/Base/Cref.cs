@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace TomLabs.Xml2Md.Core.Elements.Crefs
+namespace TomLabs.Xml2Md.Core.Elements.Refs
 {
 	public abstract class Cref : Element
 	{
@@ -28,6 +28,11 @@ namespace TomLabs.Xml2Md.Core.Elements.Crefs
 
 			ReferenceType = ResolveReferenceType(CRef);
 			ReferenceValue = StripOfReferenceType(CRef);
+		}
+
+		public override string ToString()
+		{
+			return ReferenceValue;
 		}
 	}
 }

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Xml.Linq;
-using TomLabs.Xml2Md.Core.Elements.RichInfos;
 
-namespace TomLabs.Xml2Md.Core.Elements.Params
+namespace TomLabs.Xml2Md.Core.Elements.RichInfos.Params
 {
-	public class Param : RichInfo
+	public class Param : RichInfo, IRichInfo
 	{
 		public string ReferenceName { get; set; }
 
