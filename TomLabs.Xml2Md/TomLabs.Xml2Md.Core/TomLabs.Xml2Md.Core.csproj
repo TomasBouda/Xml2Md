@@ -66,6 +66,9 @@
     <Compile Include="Elements\Refs\Crefs\See.cs" />
     <Compile Include="Elements\RichInfos\Remarks.cs" />
     <Compile Include="Elements\RichInfos\Summary.cs" />
+    <Compile Include="Extensions\ElementExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Generators\IDocGenerator.cs" />
     <Compile Include="Generators\MarkdownGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />

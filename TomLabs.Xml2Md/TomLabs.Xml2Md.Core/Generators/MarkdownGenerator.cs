@@ -1,92 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using TomLabs.Shadowgem.Extensions.String;
+using System.Linq;
 using TomLabs.Xml2Md.Core.Elements;
 using TomLabs.Xml2Md.Core.Elements.Refs.Crefs;
 using TomLabs.Xml2Md.Core.Elements.Refs.NameRefs;
 using TomLabs.Xml2Md.Core.Elements.RichInfos;
 using TomLabs.Xml2Md.Core.Elements.RichInfos.Params;
+using TomLabs.Xml2Md.Core.Extensions;
 
 namespace TomLabs.Xml2Md.Core.Generators
 {
-	internal static class ElementExtensions
+	/// <summary>
+	/// Class used to generate markdown text from Element tree
+	/// </summary>
+	public class MarkdownGenerator : IDocGenerator
 	{
-		public static string Render(this Element element, Dictionary<Type, Func<Element, string>> styles)
-		{
-			styles.TryGetValue(element.GetType(), out var format);
-			return format(element) + (element.ChildElements.Count > 0 ? element.ChildElements.Render(styles) : "");
-		}
-
-		public static string Render(this List<Element> element, Dictionary<Type, Func<Element, string>> styles)
-		{
-			var sb = new StringBuilder();
-			foreach (var elem in element)
-			{
-				sb.Append(elem.Render(styles));
-			}
-			return sb.ToString();
-		}
-
-		public static string RenderInside(this string s, List<Element> childs, Dictionary<Type, Func<Element, string>> styles)
-		{
-			var output = new List<string>();
-			foreach (var child in childs)
-			{
-				styles.TryGetValue(child.GetType(), out var format);
-				output.Add(format(child));
-			}
-			return s.FillIn(output.ToArray());
-		}
-	}
-
-	public class MarkdownGenerator
-	{
-		private Element DocumentRoot { get; set; }
+		public Element DocumentRoot { get; private set; }
 
 		public string AssemblyName { get; private set; }
 
 		#region Element Styles
 
-		private Dictionary<Type, Func<Element, string>> ElementStyles =>
+		public Dictionary<Type, Func<Element, string>> ElementStyles =>
 			new Dictionary<Type, Func<Element, string>>
 			{
 				[typeof(Doc)] =
-					(elm) => $"# {elm.ToString()}\n",
+					(elm) => $"# {elm.ToString()}\n{elm.ChildElements.Render(ElementStyles)}",
 				[typeof(Member)] =
-					(elm) => $"## {elm.ToString().Trim()}\n",
+					(elm) => $"{TypeToHeading(elm)} {((Member)elm).ReferenceType} {elm.ToString()}\n{elm.ChildElements.Render(ElementStyles)}\n***\n",
 				[typeof(Example)] =
-					(elm) => $"```cs\n{elm.ToString()}\n```\n",
+					(elm) => $"Example\n```cs\n{elm.ToString()}\n```\n",
 				[typeof(C)] =
 					(elm) => $"`{elm.ToString()}`",
 				[typeof(Value)] =
 					(elm) => $"Value {elm.ToString()}\n",
 				[typeof(See)] =
-					(elm) => $"See {((See)elm).ReferenceValue}\n",
+					(elm) => $"[{((See)elm).ReferenceValue.SplitNamespace().Last()}]({((See)elm).ReferenceValue})\n",
 				[typeof(SeeAlso)] =
-					(elm) => $"SeeAlso {((SeeAlso)elm).ReferenceValue}\n",
+					(elm) => $"[{((SeeAlso)elm).ReferenceValue.SplitNamespace().Last()}]({((SeeAlso)elm).ReferenceValue})\n",
 				[typeof(ParamRef)] =
-					(elm) => $"ParamRef {((ParamRef)elm).ReferenceName}\n",
+					(elm) => $"`{((ParamRef)elm).ReferenceName}`\n",
 				[typeof(TypeParamRef)] =
-					(elm) => $"TypeParamRef {((TypeParamRef)elm).ReferenceName}\n",
+					(elm) => $"`{((TypeParamRef)elm).ReferenceName}`\n",
 
 				#region Rich Infos
 				[typeof(Summary)] =
-					(elm) => $"Summary {elm.ToString(ElementStyles).Trim()}\n",
+					(elm) => $"{elm.ToString(ElementStyles)}\n",
 				[typeof(Returns)] =
-					(elm) => $"Returns {elm.ToString(ElementStyles).Trim()}\n",
+					(elm) => $"*Returns* {elm.ToString(ElementStyles)}\n",
 				[typeof(Remarks)] =
-					(elm) => $"Remarks {elm.ToString(ElementStyles).Trim()}\n",
+					(elm) => $"Remarks {elm.ToString(ElementStyles)}\n",
 				[typeof(Para)] =
-					(elm) => $"Para {elm.ToString(ElementStyles).Trim()}",
+					(elm) => $"Para {elm.ToString(ElementStyles)}",
 				[typeof(Param)] =
-					(elm) => $"Param {((Param)elm).ReferenceName} {elm.ToString(ElementStyles).Trim()}\n",
+					(elm) => $"Param {((Param)elm).ReferenceName} {elm.ToString(ElementStyles)}\n",
 				[typeof(TypeParam)] =
-					(elm) => $"TypeParam {((TypeParam)elm).ReferenceName} {elm.ToString(ElementStyles).Trim()}\n",
+					(elm) => $"TypeParam {((TypeParam)elm).ReferenceName} {elm.ToString(ElementStyles)}\n",
 				[typeof(Elements.Refs.Crefs.Exception)] =
-					(elm) => $"Exception {((Elements.Refs.Crefs.Exception)elm).ReferenceValue} {elm.ToString(ElementStyles).Trim()}\n",
+					(elm) => $"Exception {((Elements.Refs.Crefs.Exception)elm).ReferenceValue} {elm.ToString(ElementStyles)}\n",
 				[typeof(Permission)] =
-					(elm) => $"Permission {((Permission)elm).ReferenceValue} {elm.ToString(ElementStyles).Trim()}\n",
+					(elm) => $"Permission {((Permission)elm).ReferenceValue} {elm.ToString(ElementStyles)}\n",
 				#endregion
 
 				[typeof(Element)] =
@@ -95,14 +68,46 @@ namespace TomLabs.Xml2Md.Core.Generators
 
 		#endregion
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="documentRoot">Generated element tree</param>
 		public MarkdownGenerator(Element documentRoot)
 		{
 			DocumentRoot = documentRoot;
+
+			if (DocumentRoot is Doc)
+			{
+				var doc = DocumentRoot as Doc;
+				AssemblyName = doc.AssemblyName;
+			}
 		}
 
+		/// <summary>
+		/// Renders markdown from <see cref="DocumentRoot"/>
+		/// </summary>
+		/// <returns></returns>
 		public string Render()
 		{
 			return DocumentRoot.Render(ElementStyles);
+		}
+
+		private string TypeToHeading(Element element)
+		{
+			if (element is Member)
+			{
+				var member = element as Member;
+				switch (member.ReferenceType)
+				{
+					case EReferenceType.Type: return "##";
+					case EReferenceType.Method: return "###";
+					case EReferenceType.Property: return "###";
+					case EReferenceType.Field: return "####";
+					case EReferenceType.Event: return "####";
+				}
+			}
+
+			return string.Empty;
 		}
 	}
 }

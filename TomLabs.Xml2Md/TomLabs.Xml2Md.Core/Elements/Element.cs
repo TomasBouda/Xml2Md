@@ -44,7 +44,7 @@ namespace TomLabs.Xml2Md.Core.Elements
 		/// <summary>
 		/// Function for extracting text from XML element
 		/// </summary>
-		public virtual Func<XElement, string> TextExtractor => (x) => x.Value;
+		public virtual Func<XElement, string> TextExtractor => (x) => x.Value.RemoveTabs();
 
 		/// <summary>
 		/// Function for extracting <see cref="ChildElements"/> from XML element
@@ -99,7 +99,7 @@ namespace TomLabs.Xml2Md.Core.Elements
 				}
 				else
 				{
-					output.Append(node.ToString());
+					output.Append(node.ToString().RemoveTabs());
 				}
 			}
 			return output.ToString();
