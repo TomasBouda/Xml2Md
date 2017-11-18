@@ -110,6 +110,11 @@ namespace TomLabs.Xml2Md.Core.Elements
 			return Text;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="style"></param>
+		/// <returns></returns>
 		public virtual string ToString(Dictionary<Type, Func<Element, string>> style)
 		{
 			if (style.TryGetValue(this.GetType(), out var format))

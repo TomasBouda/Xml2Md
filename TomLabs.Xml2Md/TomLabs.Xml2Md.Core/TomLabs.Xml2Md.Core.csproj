@@ -69,7 +69,8 @@
     <Compile Include="Extensions\ElementExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Generators\IDocGenerator.cs" />
-    <Compile Include="Generators\MarkdownGenerator.cs" />
+    <Compile Include="Generators\Markdown\MarkdownGenerator.cs" />
+    <Compile Include="Generators\Markdown\MarkdownTableGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
   </ItemGroup>

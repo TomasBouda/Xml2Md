@@ -8,7 +8,7 @@ using TomLabs.Xml2Md.Core.Elements.RichInfos;
 using TomLabs.Xml2Md.Core.Elements.RichInfos.Params;
 using TomLabs.Xml2Md.Core.Extensions;
 
-namespace TomLabs.Xml2Md.Core.Generators
+namespace TomLabs.Xml2Md.Core.Generators.Markdown
 {
 	/// <summary>
 	/// Class used to generate markdown text from Element tree
@@ -27,39 +27,39 @@ namespace TomLabs.Xml2Md.Core.Generators
 				[typeof(Doc)] =
 					(elm) => $"# {elm.ToString()}\n{elm.ChildElements.Render(ElementStyles)}",
 				[typeof(Member)] =
-					(elm) => $"{TypeToHeading(elm)} {((Member)elm).ReferenceType} {elm.ToString()}\n{elm.ChildElements.Render(ElementStyles)}\n***\n",
+					(elm) => $"{TypeToHeading(elm)} *{((Member)elm).ReferenceType}* {elm.ToString().Replace($"{AssemblyName}.", "")}\n{elm.ChildElements.Render(ElementStyles)}\n***\n",
 				[typeof(Example)] =
-					(elm) => $"Example\n```cs\n{elm.ToString()}\n```\n",
+					(elm) => $"*Example*\n```cs{elm.ToString()}```\n",
 				[typeof(C)] =
 					(elm) => $"`{elm.ToString()}`",
 				[typeof(Value)] =
 					(elm) => $"Value {elm.ToString()}\n",
 				[typeof(See)] =
-					(elm) => $"[{((See)elm).ReferenceValue.SplitNamespace().Last()}]({((See)elm).ReferenceValue})\n",
+					(elm) => $"[{elm.ToString().SplitNamespace().Last()}]({elm.ToString()})\n",
 				[typeof(SeeAlso)] =
-					(elm) => $"[{((SeeAlso)elm).ReferenceValue.SplitNamespace().Last()}]({((SeeAlso)elm).ReferenceValue})\n",
+					(elm) => $"[{elm.ToString().SplitNamespace().Last()}]({elm.ToString()})\n",
 				[typeof(ParamRef)] =
-					(elm) => $"`{((ParamRef)elm).ReferenceName}`\n",
+					(elm) => $"`{elm.ToString()}`",
 				[typeof(TypeParamRef)] =
-					(elm) => $"`{((TypeParamRef)elm).ReferenceName}`\n",
+					(elm) => $"`{elm.ToString()}`",
 
 				#region Rich Infos
 				[typeof(Summary)] =
 					(elm) => $"{elm.ToString(ElementStyles)}\n",
 				[typeof(Returns)] =
-					(elm) => $"*Returns* {elm.ToString(ElementStyles)}\n",
+					(elm) => $"\n**Returns:** {elm.ToString(ElementStyles)}\n",
 				[typeof(Remarks)] =
-					(elm) => $"Remarks {elm.ToString(ElementStyles)}\n",
+					(elm) => $"{elm.ToString(ElementStyles)}\n",
 				[typeof(Para)] =
-					(elm) => $"Para {elm.ToString(ElementStyles)}",
+					(elm) => $"{elm.ToString(ElementStyles)}",
 				[typeof(Param)] =
-					(elm) => $"Param {((Param)elm).ReferenceName} {elm.ToString(ElementStyles)}\n",
+					(elm) => MarkdownTableGenerator.Render(elm, ElementStyles),
 				[typeof(TypeParam)] =
-					(elm) => $"TypeParam {((TypeParam)elm).ReferenceName} {elm.ToString(ElementStyles)}\n",
+					(elm) => MarkdownTableGenerator.Render(elm, ElementStyles),
 				[typeof(Elements.Refs.Crefs.Exception)] =
-					(elm) => $"Exception {((Elements.Refs.Crefs.Exception)elm).ReferenceValue} {elm.ToString(ElementStyles)}\n",
+					(elm) => MarkdownTableGenerator.Render(elm, ElementStyles),
 				[typeof(Permission)] =
-					(elm) => $"Permission {((Permission)elm).ReferenceValue} {elm.ToString(ElementStyles)}\n",
+					(elm) => MarkdownTableGenerator.Render(elm, ElementStyles),
 				#endregion
 
 				[typeof(Element)] =
@@ -99,11 +99,11 @@ namespace TomLabs.Xml2Md.Core.Generators
 				var member = element as Member;
 				switch (member.ReferenceType)
 				{
-					case EReferenceType.Type: return "##";
-					case EReferenceType.Method: return "###";
-					case EReferenceType.Property: return "###";
-					case EReferenceType.Field: return "####";
-					case EReferenceType.Event: return "####";
+					case EReferenceType.Type: return "## :red_circle:";
+					case EReferenceType.Method: return "### :small_blue_diamond:";
+					case EReferenceType.Property: return "### :small_orange_diamond:";
+					case EReferenceType.Field: return "#### :small_red_triangle:";
+					case EReferenceType.Event: return "#### :small_red_triangle_down:";
 				}
 			}
 

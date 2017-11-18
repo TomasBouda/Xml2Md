@@ -13,5 +13,10 @@ namespace TomLabs.Xml2Md.Core.Elements.Refs.NameRefs
 		{
 			ReferenceName = NameExtractor(xElement);
 		}
+
+		public override string ToString()
+		{
+			return ReferenceName;
+		}
 	}
 }
