@@ -17,7 +17,15 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 	{
 		public Element DocumentRoot { get; private set; }
 
+		/// <summary>
+		/// Assembly name of given <see cref="Doc"/> element
+		/// </summary>
 		public string AssemblyName { get; private set; }
+
+		/// <summary>
+		/// Gets or sets whether to render type icons. e.g. :red_circle:
+		/// </summary>
+		public bool RenderIcons { get; set; }
 
 		#region Element Styles
 
@@ -27,7 +35,8 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 				[typeof(Doc)] =
 					(elm) => $"# {elm.ToString()}\n{elm.ChildElements.Render(ElementStyles)}",
 				[typeof(Member)] =
-					(elm) => $"{TypeToHeading(elm)} *{((Member)elm).ReferenceType}* {elm.ToString().Replace($"{AssemblyName}.", "")}\n{elm.ChildElements.Render(ElementStyles)}\n***\n",
+					(elm) => $"{TypeToHeading(elm)} *{((Member)elm).ReferenceType}* {elm.ToString().Replace($"{AssemblyName}.", "")}\n" +
+								$"{elm.ChildElements.Render(ElementStyles, (e) => MarkdownTableGenerator.ResetIf(e))}\n***\n",
 				[typeof(Example)] =
 					(elm) => $"*Example*\n```cs{elm.ToString()}```\n",
 				[typeof(C)] =
@@ -72,9 +81,10 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 		/// 
 		/// </summary>
 		/// <param name="documentRoot">Generated element tree</param>
-		public MarkdownGenerator(Element documentRoot)
+		public MarkdownGenerator(Element documentRoot, bool renderIcons = true)
 		{
 			DocumentRoot = documentRoot;
+			RenderIcons = renderIcons;
 
 			if (DocumentRoot is Doc)
 			{
@@ -99,11 +109,11 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 				var member = element as Member;
 				switch (member.ReferenceType)
 				{
-					case EReferenceType.Type: return "## :red_circle:";
-					case EReferenceType.Method: return "### :small_blue_diamond:";
-					case EReferenceType.Property: return "### :small_orange_diamond:";
-					case EReferenceType.Field: return "#### :small_red_triangle:";
-					case EReferenceType.Event: return "#### :small_red_triangle_down:";
+					case EReferenceType.Type: return $"## {(RenderIcons ? ":red_circle:" : "")}";
+					case EReferenceType.Method: return $"### {(RenderIcons ? ":small_blue_diamond:" : "")}";
+					case EReferenceType.Property: return $"### {(RenderIcons ? ":small_orange_diamond:" : "")}";
+					case EReferenceType.Field: return $"#### {(RenderIcons ? ":small_red_triangle:" : "")}";
+					case EReferenceType.Event: return $"#### {(RenderIcons ? ":small_red_triangle_down:" : "")}";
 				}
 			}
 

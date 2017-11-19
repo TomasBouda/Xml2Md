@@ -8,7 +8,7 @@ namespace TomLabs.Xml2Md.Core.Extensions
 	{
 		public static List<string> SplitNamespace(this string s)
 		{
-			return s.SplitRgx(@"\.?(.\w+)").Where(x => x != string.Empty).ToList();
+			return s.ReplaceRgx(@"\(.*\)", "").SplitRgx(@"\.?(.\w+)").Where(x => x != string.Empty).ToList();
 		}
 
 		public static string RemoveRedundantLineBreaks(this string s)

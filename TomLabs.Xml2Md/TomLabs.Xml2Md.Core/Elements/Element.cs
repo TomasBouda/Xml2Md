@@ -94,7 +94,7 @@ namespace TomLabs.Xml2Md.Core.Elements
 			int i = 0;
 			foreach (var node in nodes)
 			{
-				if (Regex.IsMatch(node.ToString(), @"<(.*?)/>|<\w+>(\s+)?(.*?)(\s+)?</\w+>"))
+				if (Regex.IsMatch(node.ToString(), @"<(.*?)/>|<\w+>(\s+)?(.*?)(\s+)?</\w+>"))   // match XML elements
 				{
 					output.Append("{" + i + "}");
 					i++;

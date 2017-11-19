@@ -7,18 +7,26 @@ namespace TomLabs.Xml2Md.Core.Extensions
 {
 	internal static class ElementExtensions
 	{
-		public static string Render(this Element element, Dictionary<Type, Func<Element, string>> styles)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="element"></param>
+		/// <param name="styles"></param>
+		/// <param name="action">If not null then executes provided action on <paramref name="element"/></param>
+		/// <returns></returns>
+		public static string Render(this Element element, Dictionary<Type, Func<Element, string>> styles, Action<Element> action = null)
 		{
+			action?.Invoke(element);
 			styles.TryGetValue(element.GetType(), out var format);
 			return format(element);
 		}
 
-		public static string Render(this List<Element> elements, Dictionary<Type, Func<Element, string>> styles)
+		public static string Render(this List<Element> elements, Dictionary<Type, Func<Element, string>> styles, Action<Element> action = null)
 		{
 			var sb = new StringBuilder();
 			foreach (var elem in elements)
 			{
-				sb.Append(elem.Render(styles));
+				sb.Append(elem.Render(styles, action));
 			}
 			return sb.ToString();
 		}
