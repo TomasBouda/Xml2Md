@@ -17,7 +17,8 @@ namespace TomLabs.Xml2Md.Core.Elements
 		Method,
 		Property,
 		Field,
-		Event
+		Event,
+		Namespace
 	}
 
 	public class Element
@@ -32,6 +33,7 @@ namespace TomLabs.Xml2Md.Core.Elements
 				["P:"] = EReferenceType.Property,
 				["F:"] = EReferenceType.Field,
 				["E:"] = EReferenceType.Event,
+				["N:"] = EReferenceType.Namespace
 			};
 
 		public string Text { get; set; }

@@ -53,13 +53,13 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 				[typeof(Para)] =
 					(elm) => $"{elm.ToString(ElementStyles)}",
 				[typeof(Param)] =
-					(elm) => MarkdownTableGenerator.Render(elm, ElementStyles),
+					(elm) => MarkdownTableGenerator.Render(elm, "Param", $"{((Param)elm).ReferenceName} | {elm.ToString(ElementStyles)}\n"),
 				[typeof(TypeParam)] =
-					(elm) => MarkdownTableGenerator.Render(elm, ElementStyles),
+					(elm) => MarkdownTableGenerator.Render(elm, "Type Param", $"{((TypeParam)elm).ReferenceName} | {elm.ToString(ElementStyles)}\n"),
 				[typeof(Elements.Refs.Crefs.Exception)] =
-					(elm) => MarkdownTableGenerator.Render(elm, ElementStyles),
+					(elm) => MarkdownTableGenerator.Render(elm, "Exception", $"`{((Elements.Refs.Crefs.Exception)elm).ReferenceValue}` | {elm.ToString(ElementStyles)}\n"),
 				[typeof(Permission)] =
-					(elm) => MarkdownTableGenerator.Render(elm, ElementStyles),
+					(elm) => MarkdownTableGenerator.Render(elm, "Permission", $"`{((Permission)elm).ReferenceValue}` | {elm.ToString(ElementStyles)}\n"),
 				#endregion
 
 				[typeof(Element)] =
