@@ -7,6 +7,7 @@ using TomLabs.Xml2Md.Core.Elements.Refs.NameRefs;
 using TomLabs.Xml2Md.Core.Elements.RichInfos;
 using TomLabs.Xml2Md.Core.Elements.RichInfos.Params;
 using TomLabs.Xml2Md.Core.Extensions;
+using TomLabs.Xml2Md.Core.Generators.Data;
 
 namespace TomLabs.Xml2Md.Core.Generators.Markdown
 {
@@ -27,6 +28,11 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 		/// </summary>
 		public bool RenderIcons { get; set; }
 
+		/// <summary>
+		/// Gets or sets whether member names should be simplified to name only or should remain full named like Extensions.TypeRelated.PropertyTree.Name
+		/// </summary>
+		public bool SimplifyMemberName { get; set; }
+
 		#region Element Styles
 
 		public ElementStyles ElementStyles =>
@@ -36,7 +42,7 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 					[typeof(Doc)] =
 						(elm) => $"# {elm.ToString()}\n{elm.ChildElements.Render(ElementStyles)}",
 					[typeof(Member)] =
-						(elm) => $"{TypeToHeading(elm)} *{((Member)elm).ReferenceType}* {elm.ToString().Replace($"{AssemblyName}.", "")}\n" +
+						(elm) => $"{TypeToHeading(elm)} *{((Member)elm).ReferenceType}* {GetMemberName(elm)}\n" +
 									$"{elm.ChildElements.Render(ElementStyles)}\n***\n",
 					[typeof(Example)] =
 						(elm) => $"*Example*\n```cs{elm.ToString()}```\n",
@@ -45,9 +51,9 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 					[typeof(Value)] =
 						(elm) => $"Value {elm.ToString()}\n",
 					[typeof(See)] =
-						(elm) => $"[{elm.ToString().SplitNamespace().Last()}]({elm.ToString()})\n",
+						(elm) => $"[{elm.ToString().SplitNamespace().Last()}]({CreateLink(elm)})\n",
 					[typeof(SeeAlso)] =
-						(elm) => $"[{elm.ToString().SplitNamespace().Last()}]({elm.ToString()})\n",
+						(elm) => $"[{elm.ToString().SplitNamespace().Last()}]({CreateLink(elm)})\n",
 					[typeof(ParamRef)] =
 						(elm) => $"`{elm.ToString()}`",
 					[typeof(TypeParamRef)] =
@@ -80,14 +86,17 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 
 		#endregion
 
+		private List<DocumentLink> DocumentLinks { get; set; } = new List<DocumentLink>();
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="documentRoot">Generated element tree</param>
-		public MarkdownGenerator(Element documentRoot, bool renderIcons = true)
+		public MarkdownGenerator(Element documentRoot, bool renderIcons = true, bool simplifyMemberName = false)
 		{
 			DocumentRoot = documentRoot;
 			RenderIcons = renderIcons;
+			SimplifyMemberName = simplifyMemberName;
 
 			if (DocumentRoot is Doc)
 			{
@@ -112,11 +121,67 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 				var member = element as Member;
 				switch (member.ReferenceType)
 				{
-					case EReferenceType.Type: return $"## {(RenderIcons ? ":red_circle:" : "")}";
-					case EReferenceType.Method: return $"### {(RenderIcons ? ":small_blue_diamond:" : "")}";
-					case EReferenceType.Property: return $"### {(RenderIcons ? ":small_orange_diamond:" : "")}";
-					case EReferenceType.Field: return $"#### {(RenderIcons ? ":small_red_triangle:" : "")}";
-					case EReferenceType.Event: return $"#### {(RenderIcons ? ":small_red_triangle_down:" : "")}";
+					case EReferenceType.Type: return $"## {CreateLink(element)} {(RenderIcons ? ":red_circle:" : "")}";
+					case EReferenceType.Method: return $"### {CreateLink(element)} {(RenderIcons ? ":small_blue_diamond:" : "")}";
+					case EReferenceType.Property: return $"### {CreateLink(element)} {(RenderIcons ? ":small_orange_diamond:" : "")}";
+					case EReferenceType.Field: return $"#### {CreateLink(element)} {(RenderIcons ? ":small_red_triangle:" : "")}";
+					case EReferenceType.Event: return $"#### {CreateLink(element)} {(RenderIcons ? ":small_red_triangle_down:" : "")}";
+				}
+			}
+
+			return string.Empty;
+		}
+
+		private string CreateLink(Element element)
+		{
+			if (element is Member)
+			{
+				var member = element as Member;
+
+				var link = DocumentLinks.SingleOrDefault(l => l.TypeFullName == member.ReferenceName);
+				if (link == null)
+				{
+					link = new DocumentLink(member.ReferenceName);
+					DocumentLinks.Add(link);
+				}
+
+				return $"<a name=\"{link.Address}\"></a>";
+			}
+			else if (element is See || element is SeeAlso)
+			{
+				var see = element as See;
+				if (!see.ReferenceValue.StartsWith(AssemblyName))
+				{
+					return $"https://www.google.cz/search?q={see.ReferenceValue}";
+				}
+
+				var link = DocumentLinks.SingleOrDefault(l => l.TypeFullName == see.ReferenceValue);
+				if (link == null)
+				{
+					link = new DocumentLink(see.ReferenceValue);
+					DocumentLinks.Add(link);
+				}
+
+				return $"#{link.Address}";
+			}
+
+			return string.Empty;
+		}
+
+		private string GetMemberName(Element element)
+		{
+			if (element is Member)
+			{
+				var member = element as Member;
+				string memberFullName = element.ToString().Replace($"{AssemblyName}.", "");
+
+				if (SimplifyMemberName)
+				{
+					return memberFullName.SplitNamespace().Last();
+				}
+				else
+				{
+					return memberFullName;
 				}
 			}
 

@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using TomLabs.Xml2Md.Core.Extensions;
-using TomLabs.Xml2Md.Core.Generators;
+using TomLabs.Xml2Md.Core.Generators.Data;
 
 namespace TomLabs.Xml2Md.Core.Elements
 {

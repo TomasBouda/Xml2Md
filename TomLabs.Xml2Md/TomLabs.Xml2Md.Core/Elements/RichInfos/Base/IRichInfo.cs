@@ -1,4 +1,4 @@
-﻿using TomLabs.Xml2Md.Core.Generators;
+﻿using TomLabs.Xml2Md.Core.Generators.Data;
 
 namespace TomLabs.Xml2Md.Core.Elements.RichInfos
 {
