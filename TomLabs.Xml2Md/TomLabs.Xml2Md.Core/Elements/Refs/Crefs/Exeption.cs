@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using TomLabs.Shadowgem.Extensions.String;
 using TomLabs.Xml2Md.Core.Elements.RichInfos;
+using TomLabs.Xml2Md.Core.Generators;
 
 namespace TomLabs.Xml2Md.Core.Elements.Refs.Crefs
 {
@@ -16,9 +16,9 @@ namespace TomLabs.Xml2Md.Core.Elements.Refs.Crefs
 
 		}
 
-		public override string ToString(Dictionary<Type, Func<Element, string>> style)
+		public override string ToString(ElementStyles styles)
 		{
-			return Text.FillIn(ChildElements.Select(e => e.ToString(style)).ToArray());
+			return Text.FillIn(ChildElements.Select(e => e.ToString(styles)).ToArray());
 		}
 	}
 }

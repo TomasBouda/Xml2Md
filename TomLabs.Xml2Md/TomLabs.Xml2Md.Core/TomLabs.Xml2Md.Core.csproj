@@ -68,6 +68,7 @@
     <Compile Include="Elements\RichInfos\Summary.cs" />
     <Compile Include="Extensions\ElementExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Generators\ElementStyles.cs" />
     <Compile Include="Generators\IDocGenerator.cs" />
     <Compile Include="Generators\Markdown\MarkdownGenerator.cs" />
     <Compile Include="Generators\Markdown\MarkdownTableGenerator.cs" />

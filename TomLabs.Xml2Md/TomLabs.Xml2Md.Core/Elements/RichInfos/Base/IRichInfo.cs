@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using TomLabs.Xml2Md.Core.Generators;
 
 namespace TomLabs.Xml2Md.Core.Elements.RichInfos
 {
@@ -7,6 +6,6 @@ namespace TomLabs.Xml2Md.Core.Elements.RichInfos
 	{
 		string Text { get; set; }
 
-		string ToString(Dictionary<Type, Func<Element, string>> style);
+		string ToString(ElementStyles style);
 	}
 }

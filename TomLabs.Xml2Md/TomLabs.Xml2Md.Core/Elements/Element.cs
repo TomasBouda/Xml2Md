@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using TomLabs.Xml2Md.Core.Extensions;
+using TomLabs.Xml2Md.Core.Generators;
 
 namespace TomLabs.Xml2Md.Core.Elements
 {
@@ -115,11 +116,12 @@ namespace TomLabs.Xml2Md.Core.Elements
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="style"></param>
+		/// <param name="styles"></param>
 		/// <returns></returns>
-		public virtual string ToString(Dictionary<Type, Func<Element, string>> style)
+		public virtual string ToString(ElementStyles styles)
 		{
-			if (style.TryGetValue(this.GetType(), out var format))
+			var format = styles.GetStyle(this);
+			if (format != null)
 			{
 				return ToString(format);
 			}

@@ -29,51 +29,54 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 
 		#region Element Styles
 
-		public Dictionary<Type, Func<Element, string>> ElementStyles =>
-			new Dictionary<Type, Func<Element, string>>
-			{
-				[typeof(Doc)] =
-					(elm) => $"# {elm.ToString()}\n{elm.ChildElements.Render(ElementStyles)}",
-				[typeof(Member)] =
-					(elm) => $"{TypeToHeading(elm)} *{((Member)elm).ReferenceType}* {elm.ToString().Replace($"{AssemblyName}.", "")}\n" +
-								$"{elm.ChildElements.Render(ElementStyles, (e) => MarkdownTableGenerator.ResetIf(e))}\n***\n",
-				[typeof(Example)] =
-					(elm) => $"*Example*\n```cs{elm.ToString()}```\n",
-				[typeof(C)] =
-					(elm) => $"`{elm.ToString()}`",
-				[typeof(Value)] =
-					(elm) => $"Value {elm.ToString()}\n",
-				[typeof(See)] =
-					(elm) => $"[{elm.ToString().SplitNamespace().Last()}]({elm.ToString()})\n",
-				[typeof(SeeAlso)] =
-					(elm) => $"[{elm.ToString().SplitNamespace().Last()}]({elm.ToString()})\n",
-				[typeof(ParamRef)] =
-					(elm) => $"`{elm.ToString()}`",
-				[typeof(TypeParamRef)] =
-					(elm) => $"`{elm.ToString()}`",
+		public ElementStyles ElementStyles =>
+			new ElementStyles(
+				new Dictionary<Type, Func<Element, string>>
+				{
+					[typeof(Doc)] =
+						(elm) => $"# {elm.ToString()}\n{elm.ChildElements.Render(ElementStyles)}",
+					[typeof(Member)] =
+						(elm) => $"{TypeToHeading(elm)} *{((Member)elm).ReferenceType}* {elm.ToString().Replace($"{AssemblyName}.", "")}\n" +
+									$"{elm.ChildElements.Render(ElementStyles)}\n***\n",
+					[typeof(Example)] =
+						(elm) => $"*Example*\n```cs{elm.ToString()}```\n",
+					[typeof(C)] =
+						(elm) => $"`{elm.ToString()}`",
+					[typeof(Value)] =
+						(elm) => $"Value {elm.ToString()}\n",
+					[typeof(See)] =
+						(elm) => $"[{elm.ToString().SplitNamespace().Last()}]({elm.ToString()})\n",
+					[typeof(SeeAlso)] =
+						(elm) => $"[{elm.ToString().SplitNamespace().Last()}]({elm.ToString()})\n",
+					[typeof(ParamRef)] =
+						(elm) => $"`{elm.ToString()}`",
+					[typeof(TypeParamRef)] =
+						(elm) => $"`{elm.ToString()}`",
 
-				#region Rich Infos
-				[typeof(Summary)] =
-					(elm) => $"{elm.ToString(ElementStyles)}\n",
-				[typeof(Returns)] =
-					(elm) => $"\n**Returns:** {elm.ToString(ElementStyles)}\n",
-				[typeof(Remarks)] =
-					(elm) => $"{elm.ToString(ElementStyles)}\n",
-				[typeof(Para)] =
-					(elm) => $"{elm.ToString(ElementStyles)}",
-				[typeof(Param)] =
-					(elm) => MarkdownTableGenerator.Render(elm, "Param", $"{((Param)elm).ReferenceName} | {elm.ToString(ElementStyles)}\n"),
-				[typeof(TypeParam)] =
-					(elm) => MarkdownTableGenerator.Render(elm, "Type Param", $"{((TypeParam)elm).ReferenceName} | {elm.ToString(ElementStyles)}\n"),
-				[typeof(Elements.Refs.Crefs.Exception)] =
-					(elm) => MarkdownTableGenerator.Render(elm, "Exception", $"`{((Elements.Refs.Crefs.Exception)elm).ReferenceValue}` | {elm.ToString(ElementStyles)}\n"),
-				[typeof(Permission)] =
-					(elm) => MarkdownTableGenerator.Render(elm, "Permission", $"`{((Permission)elm).ReferenceValue}` | {elm.ToString(ElementStyles)}\n"),
-				#endregion
+					#region Rich Infos
+					[typeof(Summary)] =
+						(elm) => $"{elm.ToString(ElementStyles)}\n",
+					[typeof(Returns)] =
+						(elm) => $"\n**Returns:** {elm.ToString(ElementStyles)}\n",
+					[typeof(Remarks)] =
+						(elm) => $"{elm.ToString(ElementStyles)}\n",
+					[typeof(Para)] =
+						(elm) => $"{elm.ToString(ElementStyles)}\n",
+					[typeof(Param)] =
+						(elm) => MarkdownTableGenerator.Render(elm, "Param", $"{((Param)elm).ReferenceName} | {elm.ToString(ElementStyles)}\n"),
+					[typeof(TypeParam)] =
+						(elm) => MarkdownTableGenerator.Render(elm, "Type Param", $"{((TypeParam)elm).ReferenceName} | {elm.ToString(ElementStyles)}\n"),
+					[typeof(Elements.Refs.Crefs.Exception)] =
+						(elm) => MarkdownTableGenerator.Render(elm, "Exception", $"`{((Elements.Refs.Crefs.Exception)elm).ReferenceValue}` | {elm.ToString(ElementStyles)}\n"),
+					[typeof(Permission)] =
+						(elm) => MarkdownTableGenerator.Render(elm, "Permission", $"`{((Permission)elm).ReferenceValue}` | {elm.ToString(ElementStyles)}\n"),
+					#endregion
 
-				[typeof(Element)] =
-					(elm) => $"{elm.ToString()}\n",
-			};
+					[typeof(Element)] =
+						(elm) => $"{elm.ToString()}\n",
+				},
+				(e) => MarkdownTableGenerator.ResetIf(e)
+			);
 
 		#endregion
 
