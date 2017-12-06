@@ -49,6 +49,12 @@
     <Compile Include="Elements\C.cs" />
     <Compile Include="Elements\Refs\NameRefs\Base\Param.cs" />
     <Compile Include="Elements\RichInfos\Base\IRichInfo.cs" />
+    <Compile Include="Elements\RichInfos\Example.cs" />
+    <Compile Include="Elements\RichInfos\List\Description.cs" />
+    <Compile Include="Elements\RichInfos\List\Item.cs" />
+    <Compile Include="Elements\RichInfos\List\List.cs" />
+    <Compile Include="Elements\RichInfos\List\ListHeader.cs" />
+    <Compile Include="Elements\RichInfos\List\Term.cs" />
     <Compile Include="Elements\RichInfos\Value.cs" />
     <Compile Include="Elements\RichInfos\Base\RichInfo.cs" />
     <Compile Include="Elements\Refs\NameRefs\ParamRef.cs" />
@@ -61,7 +67,7 @@
     <Compile Include="Elements\Member.cs" />
     <Compile Include="Elements\Doc.cs" />
     <Compile Include="Elements\Refs\Crefs\Exeption.cs" />
-    <Compile Include="Elements\Example.cs" />
+    <Compile Include="Elements\Code.cs" />
     <Compile Include="Elements\Refs\Crefs\SeeAlso.cs" />
     <Compile Include="Elements\Refs\Crefs\See.cs" />
     <Compile Include="Elements\RichInfos\Remarks.cs" />

@@ -2,9 +2,9 @@
 
 namespace TomLabs.Xml2Md.Core.Elements
 {
-	public class Example : Element
+	public class Code : Element
 	{
-		public Example(XElement xElement) : base(xElement)
+		public Code(XElement xElement) : base(xElement)
 		{
 		}
 

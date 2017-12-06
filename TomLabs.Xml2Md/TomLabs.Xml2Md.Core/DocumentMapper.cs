@@ -12,11 +12,11 @@ namespace TomLabs.Xml2Md.Core
 	{
 		/// <summary>
 		/// Provides mappings for XML element name to Type
-		/// eg. seeaslo => <see cref="TomLabs.Xml2Md.Core.Elements.Refs.SeeAlso"/>
+		/// e.g. seealso => <see cref="TomLabs.Xml2Md.Core.Elements.Refs.SeeAlso"/>
 		/// </summary>
 		public static Dictionary<string, Type> ElementTypeMapping { get; private set; } = Assembly.GetExecutingAssembly()
 			.GetTypes()
-			.Where(t => t.IsClass && !t.IsAbstract && typeof(Element).IsAssignableFrom(t))
+			.Where(t => t.IsClass && !t.IsAbstract && typeof(Element).IsAssignableFrom(t))  // gets all types that inherit from Element and are not abstract
 			.ToDictionary(t => t.Name.ToLower(), t => t);
 
 		private XNode XmlDocumentNode { get; set; }
@@ -26,6 +26,11 @@ namespace TomLabs.Xml2Md.Core
 			XmlDocumentNode = xmlNode;
 		}
 
+		/// <summary>
+		/// Creates instance of new DocumentMapper and adds given <paramref name="customMappings"/> into <see cref="ElementTypeMapping"/>
+		/// </summary>
+		/// <param name="xmlNode"></param>
+		/// <param name="customMappings">Custom XML element mapping. E.g. {"see", typeof(See)}</param>
 		public DocumentMapper(XNode xmlNode, Dictionary<string, Type> customMappings)
 		{
 			XmlDocumentNode = xmlNode;
@@ -34,6 +39,10 @@ namespace TomLabs.Xml2Md.Core
 				.ToDictionary(t => t.Key, t => t.Value);
 		}
 
+		/// <summary>
+		/// Creates <see cref="Element"/> tree
+		/// </summary>
+		/// <returns></returns>
 		public Element Map()
 		{
 			return XmlDocumentNode.ToDocumentTree();

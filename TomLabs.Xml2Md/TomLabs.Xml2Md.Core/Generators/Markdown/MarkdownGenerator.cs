@@ -5,6 +5,7 @@ using TomLabs.Xml2Md.Core.Elements;
 using TomLabs.Xml2Md.Core.Elements.Refs.Crefs;
 using TomLabs.Xml2Md.Core.Elements.Refs.NameRefs;
 using TomLabs.Xml2Md.Core.Elements.RichInfos;
+using TomLabs.Xml2Md.Core.Elements.RichInfos.Lists;
 using TomLabs.Xml2Md.Core.Elements.RichInfos.Params;
 using TomLabs.Xml2Md.Core.Extensions;
 using TomLabs.Xml2Md.Core.Generators.Data;
@@ -44,8 +45,8 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 					[typeof(Member)] =
 						(elm) => $"{TypeToHeading(elm)} *{((Member)elm).ReferenceType}* {GetMemberName(elm)}\n" +
 									$"{elm.ChildElements.Render(ElementStyles)}\n***\n",
-					[typeof(Example)] =
-						(elm) => $"*Example*\n```cs{elm.ToString()}```\n",
+					[typeof(Code)] =
+						(elm) => $"```cs{elm.ToString()}```\n",
 					[typeof(C)] =
 						(elm) => $"`{elm.ToString()}`",
 					[typeof(Value)] =
@@ -60,6 +61,10 @@ namespace TomLabs.Xml2Md.Core.Generators.Markdown
 						(elm) => $"`{elm.ToString()}`",
 
 					#region Rich Infos
+					[typeof(Example)] =
+						(elm) => $"*Example*\n{elm.ToString(ElementStyles)}\n",
+					[typeof(List)] =
+						(elm) => $"{elm.ToString(ElementStyles)}",
 					[typeof(Summary)] =
 						(elm) => $"{elm.ToString(ElementStyles)}\n",
 					[typeof(Returns)] =
